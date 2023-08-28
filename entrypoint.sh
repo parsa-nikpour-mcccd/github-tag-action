@@ -58,6 +58,15 @@ setOutput() {
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
+## Make sure the commit message contains "merge" so we are not running the workflow on every push to master
+commit_message=$( git log --format=%B -n 1 db0fbb )
+lowered_commit_message=$(awk '{ print tolower($0) }' <<< $commit_message)
+if [[ $lowered_commit_message != "*merge*" ]]
+then
+    echo "Commit doesn't contain 'merge'"
+    exit 0
+fi
+
 pre_release="$prerelease"
 IFS=',' read -ra branch <<< "$release_branches"
 for b in "${branch[@]}"; do
@@ -264,7 +273,6 @@ then
 }
 EOF
 )
-
     git_ref_posted=$( echo "${git_refs_response}" | jq .ref | tr -d '"' )
 
     echo "::debug::${git_refs_response}"
