@@ -126,7 +126,7 @@ commit=$(git rev-parse HEAD)
 # skip if there are no new commits for non-pre_release
 if [ "$tag_commit" == "$commit" ]
 then
-    echo "No new commits since previous tag. Skipping..."
+    echo "No new commits since previous tag because the commits are the same. Skipping..."
     setOutput "new_tag" "$tag"
     setOutput "tag" "$tag"
     exit 0
@@ -189,7 +189,7 @@ then
     # skip if there are no new commits for pre_release
     if [ "$pre_tag_commit" == "$commit" ]
     then
-        echo "No new commits since previous pre_tag. Skipping..."
+	echo "No new commits since previous pre_tag (pre-release). Skipping..."
         setOutput "new_tag" "$pre_tag"
         setOutput "tag" "$pre_tag"
         exit 0
