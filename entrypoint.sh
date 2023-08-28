@@ -123,6 +123,16 @@ fi
 tag_commit=$(git rev-list -n 1 "$tag" || true )
 # get current commit hash
 commit=$(git rev-parse HEAD)
+
+## Make sure the commit message contains "merge" so we are not running the workflow on every push to master
+commit_message=$( git log --format=%B -n 1 $commit )
+lowered_commit_message=$(awk '{ print tolower($0) }' <<< $commit_message)
+if [[ $lowered_commit_message != "*merge*" ]]
+then
+    echo "Commit doesn't contain 'merge'"
+    exit 0
+fi
+
 # skip if there are no new commits for non-pre_release
 if [ "$tag_commit" == "$commit" ]
 then
@@ -264,7 +274,6 @@ then
 }
 EOF
 )
-
     git_ref_posted=$( echo "${git_refs_response}" | jq .ref | tr -d '"' )
 
     echo "::debug::${git_refs_response}"
